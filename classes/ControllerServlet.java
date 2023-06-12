@@ -43,7 +43,7 @@ public class ControllerServlet extends HttpServlet {
         try {
             switch (action) {
             case "/new-customer":
-                showNewFormCustomer(request, response);
+                showNewCustomerForm(request, response);
                 break;
             case "/insert-customer":
                 insertCustomer(request, response);
@@ -52,16 +52,19 @@ public class ControllerServlet extends HttpServlet {
                 deleteCustomer(request, response);
                 break;
             case "/edit-customer":
-                showEditFormCustomer(request, response);
+                showEditCustomerForm(request, response);
                 break;
             case "/update-customer":
                 updateCustomer(request, response);
                 break;
+            case "/list-customer":
+                listCustomer(request, response);
+                break;
             case "/new-salesman":
-                //showNewForm(request, response);
+                showNewSalesmanForm(request, response);
                 break;
             case "/insert-salesman":
-                //insertBook(request, response);
+                insertSalesman(request, response);
                 break;
             case "/delete-salesman":
                 //deleteBook(request, response);
@@ -104,7 +107,7 @@ public class ControllerServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
     
-    private void showNewFormCustomer(HttpServletRequest request, HttpServletResponse response)
+    private void showNewCustomerForm(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher("CustomerForm.jsp");
         dispatcher.forward(request, response);
@@ -123,7 +126,7 @@ public class ControllerServlet extends HttpServlet {
         response.sendRedirect("list-customer");
     }
 
-    private void showEditFormCustomer(HttpServletRequest request, HttpServletResponse response)
+    private void showEditCustomerForm(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Customer existingCustomer = customerDAO.getCustomer(id);
@@ -151,6 +154,32 @@ public class ControllerServlet extends HttpServlet {
  
         Customer customer = new Customer(id);
         customerDAO.deleteCustomer(customer);
+        response.sendRedirect("list-customer");
+    }
+
+    private void listCustomer(HttpServletRequest request, HttpServletResponse response)
+    throws SQLException, IOException, ServletException {
+        List<Customer> listCustomer = customerDAO.listAllCustomers();
+        request.setAttribute("listCustomer", listCustomer);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("CustomerList.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void showNewSalesmanForm(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("SalesmanForm.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void insertSalesman(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        int id_salesman = Integer.parseInt(request.getParameter("id_salesman"));
+        String name = request.getParameter("name");
+        String city = request.getParameter("city");
+        float comission = Float.parseFloat(request.getParameter("grade"));
+ 
+        Salesman newSalesman = new Salesman(id_salesman, name, city, comission);
+        salesmanDAO.insertSalesman(newSalesman);
         response.sendRedirect("list-customer");
     }
 
