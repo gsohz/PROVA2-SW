@@ -1,3 +1,4 @@
+package prova2sw;
 
 /*
  * Gabriel Ferreira de Souza
@@ -13,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Date;
 
 public class ControllerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -67,25 +69,28 @@ public class ControllerServlet extends HttpServlet {
                 insertSalesman(request, response);
                 break;
             case "/delete-salesman":
-                //deleteBook(request, response);
+                deleteSalesman(request, response);
                 break;
             case "/edit-salesman":
-                //showEditForm(request, response);
+            	showEditSalesmanForm(request, response);
                 break;
             case "/update-salesman":
-                //updateBook(request, response);
+            	updateSalesman(request, response);
+                break;
+            case "/list-salesman":
+                listSalesman(request, response);
                 break;
             case "/new-orders":
-                //showNewForm(request, response);
+            	showNewOrders(request, response);
                 break;
             case "/insert-orders":
-                //insertBook(request, response);
+            	insertOrders(request, response);
                 break;
             case "/delete-orders":
-                //deleteBook(request, response);
+            	deleteOrders(request, response);
                 break;
             case "/edit-orders":
-                //showEditForm(request, response);
+            	showEditOrdersForm(request, response);
                 break;
             case "/update-orders":
                 //updateBook(request, response);
@@ -182,5 +187,93 @@ public class ControllerServlet extends HttpServlet {
         salesmanDAO.insertSalesman(newSalesman);
         response.sendRedirect("list-customer");
     }
+    
+    private void deleteSalesman(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+ 
+        Salesman salesman = new Salesman(id);
+        salesmanDAO.deleteSalesman(salesman);
+        response.sendRedirect("list-customer");
+    }
+    
+    private void showEditSalesmanForm(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Salesman existingSalesman = salesmanDAO.getSalesman(id);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("SalesmanForm.jsp");
+        request.setAttribute("salesman", existingSalesman);
+        dispatcher.forward(request, response);
+    }
+    
+    private void updateSalesman(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        int id_salesman = Integer.parseInt(request.getParameter("id_salesman"));
+        String name = request.getParameter("name");
+        String city = request.getParameter("city");
+        float comission = Float.parseFloat(request.getParameter("grade"));
+ 
+        Salesman salesman = new Salesman(id_salesman, name, city, comission);
+        salesmanDAO.updateSalesman(salesman);
+        response.sendRedirect("list-salesman");
+    }
+    
+    private void listSalesman(HttpServletRequest request, HttpServletResponse response)
+    	    throws SQLException, IOException, ServletException {
+    	        List<Salesman> listSalesman = salesmanDAO.listAllSalesmans();
+    	        request.setAttribute("listSalesman", listSalesman);
+    	        RequestDispatcher dispatcher = request.getRequestDispatcher("SalesmanList.jsp");
+    	        dispatcher.forward(request, response);
+    	    }
 
+    private void showNewOrders(HttpServletRequest request, HttpServletResponse response)
+    	    throws ServletException, IOException {
+    	        RequestDispatcher dispatcher = request.getRequestDispatcher("OrderForm.jsp");
+    	        dispatcher.forward(request, response);
+    	    }
+    
+    private void insertOrders(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        int id_orders = Integer.parseInt(request.getParameter("id_orders"));
+        float purch_amt = Float.parseFloat(request.getParameter("purch_amt"));
+        //converter String to Date
+        Date ord_date = request.getParameter("ord_date");
+        int id_customer = Integer.parseInt(request.getParameter("id_customer"));
+        int id_salesman = Integer.parseInt(request.getParameter("id_salesman"));
+ 
+        Orders newOrders = new Orders(id_orders, purch_amt, ord_date, id_customer, id_salesman);
+        ordersDAO.insertOrders(newOrders);
+        response.sendRedirect("list-Orders");
+    }
+    
+    private void deleteOrders(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+ 
+        Orders orders = new Orders(id);
+        ordersDAO.deleteOrders(orders);
+        response.sendRedirect("list-orders");
+    }
+    
+    private void showEditOrdersForm(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Orders existingOrders = ordersDAO.getOrders(id);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("OrdersForm.jsp");
+        request.setAttribute("orders", existingOrders);
+        dispatcher.forward(request, response);
+    }
+    
+    private void updateOrders(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        int id_orders = Integer.parseInt(request.getParameter("id_orders"));
+        float purch_amt = Float.parseFloat(request.getParameter("purch_amt"));
+        Date ord_date = request.getParameter("ord_date");
+        int id_customer = Integer.parseInt(request.getParameter("id_customer"));
+        int id_salesman = Integer.parseInt(request.getParameter("id_salesman"));
+ 
+        Orders orders = new Orders(id_orders, purch_amt, ord_date, id_customer, id_salesman);
+        ordersDAO.updateOrders(orders);
+        response.sendRedirect("list-orders");
+    }
 }
