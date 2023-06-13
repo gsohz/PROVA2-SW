@@ -93,7 +93,7 @@ public class ControllerServlet extends HttpServlet {
             	showEditOrdersForm(request, response);
                 break;
             case "/update-orders":
-                //updateBook(request, response);
+                updateOrders(request, response);
                 break;
             default:
                 listOrders(request, response);
