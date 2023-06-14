@@ -1,144 +1,64 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Tempo de geração: 12-Jun-2023 às 13:59
--- Versão do servidor: 10.4.25-MariaDB
--- versão do PHP: 8.1.10
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
+-- --------------------------------------------------------
+-- Servidor:                     127.0.0.1
+-- Versão do servidor:           8.0.32 - MySQL Community Server - GPL
+-- OS do Servidor:               Win64
+-- HeidiSQL Versão:              12.4.0.6659
+-- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
---
--- Banco de dados: `prova2`
---
 
--- --------------------------------------------------------
+-- Copiando estrutura do banco de dados para prova2
+CREATE DATABASE IF NOT EXISTS `prova2` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `prova2`;
 
---
--- Estrutura da tabela `customer`
---
+-- Copiando estrutura para tabela prova2.customer
+CREATE TABLE IF NOT EXISTS `customer` (
+  `customer_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `city` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `grade` int DEFAULT NULL,
+  `salesman_id` int DEFAULT NULL,
+  PRIMARY KEY (`customer_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 
-CREATE TABLE `customer` (
-  `id_customer` int(5) NOT NULL,
-  `name` varchar(30) DEFAULT NULL,
-  `city` varchar(15) DEFAULT NULL,
-  `grade` int(3) DEFAULT NULL,
-  `id_salesman` int(5) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Extraindo dados da tabela `customer`
---
+-- Copiando estrutura para tabela prova2.salesman
+CREATE TABLE IF NOT EXISTS `salesman` (
+  `salesman_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `city` varchar(15) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `comission` decimal(5,2) DEFAULT NULL,
+  PRIMARY KEY (`salesman_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `customer` (`id_customer`, `name`, `city`, `grade`, `id_salesman`) VALUES
-(12235, 'Luan', 'São Vicente', 8, NULL),
-(12236, 'Fabio', 'Cubatão', 9, NULL);
 
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `orders`
---
-
-CREATE TABLE `orders` (
-  `id_orders` int(5) NOT NULL,
+-- Copiando estrutura para tabela prova2.orders
+CREATE TABLE IF NOT EXISTS `orders` (
+  `orders_id` int NOT NULL AUTO_INCREMENT,
   `purch_amt` decimal(8,2) DEFAULT NULL,
   `ord_date` date DEFAULT NULL,
-  `id_customer` int(5) NOT NULL,
-  `id_salesman` int(5) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `customer_id` int NOT NULL,
+  `salesman_id` int NOT NULL,
+  PRIMARY KEY (`orders_id`) USING BTREE,
+  KEY `fk_orders_customer_idx` (`customer_id`) USING BTREE,
+  KEY `fk_orders_salesman1_idx` (`salesman_id`) USING BTREE,
+  CONSTRAINT `fk_orders_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  CONSTRAINT `fk_orders_salesman` FOREIGN KEY (`salesman_id`) REFERENCES `salesman` (`salesman_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 
---
--- Extraindo dados da tabela `orders`
---
 
-INSERT INTO `orders` (`id_orders`, `purch_amt`, `ord_date`, `id_customer`, `id_salesman`) VALUES
-(1, '12356.60', '2023-06-12', 12236, 12443),
-(2, '23451.25', '2023-06-11', 12235, 12443),
-(3, '5985.40', '2023-06-08', 12235, 10829);
 
--- --------------------------------------------------------
 
---
--- Estrutura da tabela `salesman`
---
-
-CREATE TABLE `salesman` (
-  `id_salesman` int(5) NOT NULL,
-  `name` varchar(30) DEFAULT NULL,
-  `city` varchar(15) DEFAULT NULL,
-  `comission` decimal(5,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Extraindo dados da tabela `salesman`
---
-
-INSERT INTO `salesman` (`id_salesman`, `name`, `city`, `comission`) VALUES
-(10829, 'Paulo', 'São Paulo', '100.50'),
-(12443, 'João', 'Praia Grande', '42.43');
-
---
--- Índices para tabelas despejadas
---
-
---
--- Índices para tabela `customer`
---
-ALTER TABLE `customer`
-  ADD PRIMARY KEY (`id_customer`);
-
---
--- Índices para tabela `orders`
---
-ALTER TABLE `orders`
-  ADD PRIMARY KEY (`id_orders`),
-  ADD KEY `fk_orders_customer_idx` (`id_customer`),
-  ADD KEY `fk_orders_salesman1_idx` (`id_salesman`);
-
---
--- Índices para tabela `salesman`
---
-ALTER TABLE `salesman`
-  ADD PRIMARY KEY (`id_salesman`);
-
---
--- AUTO_INCREMENT de tabelas despejadas
---
-
---
--- AUTO_INCREMENT de tabela `customer`
---
-ALTER TABLE `customer`
-  MODIFY `id_customer` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12237;
-
---
--- AUTO_INCREMENT de tabela `orders`
---
-ALTER TABLE `orders`
-  MODIFY `id_orders` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- Restrições para despejos de tabelas
---
-
---
--- Limitadores para a tabela `orders`
---
-ALTER TABLE `orders`
-  ADD CONSTRAINT `fk_orders_customer` FOREIGN KEY (`id_customer`) REFERENCES `customer` (`id_customer`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_orders_salesman1` FOREIGN KEY (`id_salesman`) REFERENCES `salesman` (`id_salesman`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-COMMIT;
-
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
